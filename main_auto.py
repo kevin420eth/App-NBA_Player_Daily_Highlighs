@@ -19,7 +19,7 @@ chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 driver = webdriver.Chrome(service=s, options=chrome_options)
 
-url = "https://www.nba.com/games?date=2023-01-04"
+url = "https://www.nba.com/games?date=2023-02-1"
 driver.get(url)
 
 driver.maximize_window()
