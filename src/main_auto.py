@@ -1,4 +1,4 @@
-import json, time, thumbnail_maker
+import json, time, os, thumbnail_maker
 from datetime import datetime
 from field_goal_made import Fgm
 from block_and_steal import Blk_And_Stl
@@ -47,7 +47,9 @@ today_date = str(datetime.now()).split()[0].replace("-","")
 game_date = url.replace("https://www.nba.com/games?date=","").split("-")
 game_date = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
 
-with open(f"./completed_player-{today_date}.txt", "a") as f:
+os.mkdir(f'./{game_date}')
+
+with open(f"./{game_date}/completed_player-{today_date}.txt", "a") as f:
     pass
 #---------------------------------------------Scrape Data---------------------------------------------
 
@@ -62,7 +64,7 @@ for _ in gamecard:
     game_page_link = _.find_element(By.TAG_NAME,"a").get_attribute("href")
     match_info = game_page_link.replace("https://www.nba.com/game/","").split("-")
 
-    with open("./team_info.json","r") as f:
+    with open("../assets/information/team_info.json","r") as f:
         team_dict = json.load(f)
 
     away_team = team_dict[match_info[0].upper()]["Name"]
@@ -151,7 +153,7 @@ while True:
 
             for each_player in highlight_player:
                 try:
-                    with open(f"./completed_player-{today_date}.txt", "r") as f:
+                    with open(f"./{game_date}/completed_player-{today_date}.txt", "r") as f:
                         completed_list = f.read()
                 except:
                     completed_list = ""
@@ -160,15 +162,15 @@ while True:
                     pass
                 else:
                     if each_player["fgm_data"] > 0:
-                        fgm.download(each_player["fgm_link"], each_player['player_name'], driver)
+                        fgm.download(each_player["fgm_link"], each_player['player_name'], today_date, driver)
                         print("FGM clips are completed!")
 
                     if each_player["ast_data"] > 0:
-                        ast.download(each_player["ast_link"], each_player["ast_data"], each_player['player_name'], driver)
+                        ast.download(each_player["ast_link"], each_player["ast_data"], each_player['player_name'], today_date, driver)
                         print("AST clips are completed!")
 
                     if each_player["blk_data"] > 0:
-                        blk_and_stl.download(each_player["blk_link"], each_player['player_name'], driver)
+                        blk_and_stl.download(each_player["blk_link"], each_player['player_name'], today_date, driver)
                         print("BLK clips are completed!")
 
                     yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date}) | NBA Regular Season"
@@ -179,7 +181,7 @@ while True:
                         f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
                         f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date}\n")
                     
-                    hm.highlight_maker(each_player["player_name"])
+                    hm.highlight_maker(each_player["player_name"], game_date)
 
                     thumbnail_maker.make_thumbnail(
                     each_player["player_name"],
@@ -192,9 +194,9 @@ while True:
                     game_date
                     )
 
-                    upload_video.upload_video(driver,each_player["player_name"], yt_title)
+                    upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date)
 
-                    with open(f"./completed_player-{today_date}.txt", "a") as f:
+                    with open(f"./{game_date}/completed_player-{today_date}.txt", "a") as f:
                         f.write(f'{each_player["player_name"]}\n')
 
             #Delete the game which is done out of game_info list

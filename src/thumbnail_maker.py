@@ -18,13 +18,13 @@ def make_thumbnail(player_name, player_profile_link, pts_data, reb_data, ast_dat
     
     #Download the pfp
     response = requests.get(player_pfp_link)
-    with open(f"C:/Users/Kevin/Desktop/{player_name}/{player_name}.png","wb") as f:
+    with open(f"../{game_date}/{player_name}/{player_name}.png","wb") as f:
         f.write(response.content)
 
     #Import mask, background and the player photo for materials
-    mask = Image.open("./thumbnail/mask/mask1.png")
-    background = Image.open("./thumbnail/background/background1.png")
-    player_photo = Image.open(f"C:/Users/Kevin/Desktop/{player_name}/{player_name}.png")
+    mask = Image.open("../assets/thumbnail/mask/mask1.png")
+    background = Image.open("../assets/thumbnail/background/background1.png")
+    player_photo = Image.open(f"../{game_date}/{player_name}/{player_name}.png")
 
     #Resize the player photo to 1478*1080
     player_photo = player_photo.resize((1478,1080))
@@ -40,9 +40,9 @@ def make_thumbnail(player_name, player_profile_link, pts_data, reb_data, ast_dat
 
     #Text part
     thumbnail_text = ImageDraw.Draw(thumbnail)
-    data_font = ImageFont.truetype("C:/Users/Kevin/AppData/Local/Microsoft/Windows/Fonts/Audiowide-Regular.ttf", size=150)
-    title_font = ImageFont.truetype("C:/Users/Kevin/AppData/Local/Microsoft/Windows/Fonts/Audiowide-Regular.ttf", size=85)
-    game_info_font = ImageFont.truetype("C:/Users/Kevin/AppData/Local/Microsoft/Windows/Fonts/Audiowide-Regular.ttf", size=60)
+    data_font = ImageFont.truetype("../assets/thumbnail/font/Audiowide-Regular.ttf", size=150)
+    title_font = ImageFont.truetype("../assets/thumbnail/font/Audiowide-Regular.ttf", size=85)
+    game_info_font = ImageFont.truetype("../assets/thumbnail/font/Audiowide-Regular.ttf", size=60)
 
     #Write the player's game data (PTS/REB/AST)
     thumbnail_text.multiline_text((30,0),f"{pts_data}\n{reb_data}\n{ast_data}", fill=(0,0,0), font=data_font, align="center", spacing=50)
@@ -55,5 +55,5 @@ def make_thumbnail(player_name, player_profile_link, pts_data, reb_data, ast_dat
     thumbnail_text.multiline_text((100,900), f"{away_team} @ {home_team}\n{game_date}", fill=(0,0,0), font=game_info_font, align="center")
 
     #Save the thumbnail
-    thumbnail.save(f"C:/Users/Kevin/Desktop/{player_name}/thumbnail.png")
+    thumbnail.save(f"../{game_date}/{player_name}/thumbnail.png")
     print("Thumbnail is done!")
