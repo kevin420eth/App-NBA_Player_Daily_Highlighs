@@ -19,7 +19,7 @@ chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 driver = webdriver.Chrome(service=s, options=chrome_options)
 
-url = "https://www.nba.com/games?date=2023-02-1"
+url = "https://www.nba.com/games?date=2023-3-8"
 driver.get(url)
 
 driver.maximize_window()
@@ -47,7 +47,7 @@ today_date = str(datetime.now()).split()[0].replace("-","")
 game_date = url.replace("https://www.nba.com/games?date=","").split("-")
 game_date = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
 
-with open(f"./Video Download/completed_player-{today_date}.txt", "a") as f:
+with open(f"./completed_player-{today_date}.txt", "a") as f:
     pass
 #---------------------------------------------Scrape Data---------------------------------------------
 
@@ -62,7 +62,7 @@ for _ in gamecard:
     game_page_link = _.find_element(By.TAG_NAME,"a").get_attribute("href")
     match_info = game_page_link.replace("https://www.nba.com/game/","").split("-")
 
-    with open("Video Download/team_info.json","r") as f:
+    with open("./team_info.json","r") as f:
         team_dict = json.load(f)
 
     away_team = team_dict[match_info[0].upper()]["Name"]
@@ -151,7 +151,7 @@ while True:
 
             for each_player in highlight_player:
                 try:
-                    with open(f"Video Download/completed_player-{today_date}.txt", "r") as f:
+                    with open(f"./completed_player-{today_date}.txt", "r") as f:
                         completed_list = f.read()
                 except:
                     completed_list = ""
@@ -194,7 +194,7 @@ while True:
 
                     upload_video.upload_video(driver,each_player["player_name"], yt_title)
 
-                    with open(f"Video Download/completed_player-{today_date}.txt", "a") as f:
+                    with open(f"./completed_player-{today_date}.txt", "a") as f:
                         f.write(f'{each_player["player_name"]}\n')
 
             #Delete the game which is done out of game_info list

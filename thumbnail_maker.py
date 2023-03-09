@@ -22,8 +22,8 @@ def make_thumbnail(player_name, player_profile_link, pts_data, reb_data, ast_dat
         f.write(response.content)
 
     #Import mask, background and the player photo for materials
-    mask = Image.open("Video Download/thumbnail/mask/mask1.png")
-    background = Image.open("Video Download/thumbnail/background/background1.png")
+    mask = Image.open("./thumbnail/mask/mask1.png")
+    background = Image.open("./thumbnail/background/background1.png")
     player_photo = Image.open(f"C:/Users/Kevin/Desktop/{player_name}/{player_name}.png")
 
     #Resize the player photo to 1478*1080
