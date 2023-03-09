@@ -152,7 +152,7 @@ class Ast:
 #------------------------------------------Download the videos--------------------------------
 
         try:
-            os.mkdir(f"C:/Users/Kevin/Desktop/{player_name}")
+            os.mkdir(f"../../build/{game_date}/{player_name}")
         except:
             pass
 
@@ -161,10 +161,10 @@ class Ast:
         for _ in all_video_link:
             try:
                 response = requests.get(_)
-                with open(f"./{game_date}/{player_name}/{each_play_time[n]}.mp4","wb") as f:
+                with open(f"../../build/{game_date}/{player_name}/{each_play_time[n]}.mp4","wb") as f:
                     f.write(response.content)
             except Exception as e:
-                with open(f"../{game_date}/{player_name}/log.txt","a") as f:
+                with open(f"../../build/{game_date}/{player_name}/log.txt","a") as f:
                     f.write(f"{e}\n")
                     f.write(f"{n+1} of {len(all_video_link)} is missing")
             else:          
@@ -176,5 +176,5 @@ class Ast:
         if len(all_video_link) == len(key_word_list):
             pass
         else:
-            with open(f"C:/Users/Kevin/Desktop/videos_missing.txt", "a") as f:
+            with open(f"../../build/{game_date}/videos_missing.txt", "a") as f:
                 f.write(f"{player_name} - AST video missing\n")

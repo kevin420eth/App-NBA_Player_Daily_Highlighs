@@ -1,8 +1,8 @@
 import time
 from datetime import datetime
-from field_goal_made import Fgm
-from block_and_steal import Blk_And_Stl
-from assist import Ast
+from data.field_goal_made import Fgm
+from data.block_and_steal import Blk_And_Stl
+from data.assist import Ast
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service

@@ -18,7 +18,7 @@ class Upload_Video:
                 driver.refresh()
                 time.sleep(5)
             else:
-                filepath = f'../{game_date}/{player_name}/{player_name}.mp4'
+                filepath = f'../../build/{game_date}/{player_name}/{player_name}.mp4'
                 select_file.send_keys(filepath)
                 break
 
@@ -43,7 +43,7 @@ class Upload_Video:
             except:
                 print("fuck")
             else:
-                filepath = f'../{game_date}/{player_name}/thumbnail.png'
+                filepath = f'../../build/{game_date}/{player_name}/thumbnail.png'
                 select_thumbnail.send_keys(filepath)
                 break
 

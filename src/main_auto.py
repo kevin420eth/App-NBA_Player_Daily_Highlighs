@@ -1,10 +1,11 @@
-import json, time, os, thumbnail_maker
+import json, time, os
 from datetime import datetime
-from field_goal_made import Fgm
-from block_and_steal import Blk_And_Stl
-from assist import Ast
-from highlights_maker import Highlight_Make
-from upload_video import Upload_Video
+from data.field_goal_made import Fgm
+from data.block_and_steal import Blk_And_Stl
+from data.assist import Ast
+from video.highlights_maker import Highlight_Make
+from video.thumbnail_maker import make_thumbnail
+from video.upload_video import Upload_Video
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -183,7 +184,7 @@ while True:
                     
                     hm.highlight_maker(each_player["player_name"], game_date)
 
-                    thumbnail_maker.make_thumbnail(
+                    make_thumbnail(
                     each_player["player_name"],
                     each_player["player_profile_link"],
                     each_player["pts_data"],
