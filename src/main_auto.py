@@ -172,6 +172,7 @@ while True:
                 if each_player["player_name"] in completed_list:
                     pass
                 else:
+                    start_time = time.time()
                     if each_player["fgm_data"] > 0:
                         fgm.download(each_player["fgm_link"], each_player['player_name'], game_date, driver, build_path)
                         print("FGM clips are completed!")
@@ -183,14 +184,6 @@ while True:
                     if each_player["blk_data"] > 0:
                         blk_and_stl.download(each_player["blk_link"], each_player['player_name'], game_date, driver, build_path)
                         print("BLK clips are completed!")
-
-                    yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date_readable}) | NBA Regular Season"
-
-                    with open(f"{build_path}/{game_date}/{each_player['player_name']}/log.txt","a",encoding="utf-8") as f:
-                        f.write("The title for Youtube 👇\n")
-                        f.write(f"{yt_title}\n")
-                        f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
-                        f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date_readable}\n")
                     
                     hm.highlight_maker(each_player["player_name"], game_date, assets_path, build_path)
 
@@ -208,7 +201,18 @@ while True:
                     build_path
                     )
 
+                    yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date_readable}) | NBA Regular Season"
+
                     upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date, assets_path, build_path)
+
+                    end_time = time.time()
+
+                    with open(f"{build_path}/{game_date}/{each_player['player_name']}/log.txt","a",encoding="utf-8") as f:
+                        f.write("The title for Youtube 👇\n")
+                        f.write(f"{yt_title}\n")
+                        f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
+                        f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date_readable}\n")
+                        f.write(f"This video cost {int(start_time-end_time)} seconds to complete\n")
 
                     with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
                         f.write(f'{each_player["player_name"]}\n')
