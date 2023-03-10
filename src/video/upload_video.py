@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 class Upload_Video:
-    def upload_video(self, driver, player_name, title, game_date):
+    def upload_video(self, driver, player_name, title, game_date, assets_path, build_path):
         driver.switch_to.window(driver.window_handles[1])
         url = "https://studio.youtube.com/channel/UCr7j8DG6ZWNJf5R8LRweYBw/videos/upload?d=ud&filter=%5B%5D&sort=%7B%22columnType%22%3A%22date%22%2C%22sortOrder%22%3A%22DESCENDING%22%7D"
 
@@ -18,7 +18,7 @@ class Upload_Video:
                 driver.refresh()
                 time.sleep(5)
             else:
-                filepath = f'../../build/{game_date}/{player_name}/{player_name}.mp4'
+                filepath = f'{build_path}/{game_date}/{player_name}/{player_name}.mp4'
                 select_file.send_keys(filepath)
                 break
 
@@ -43,7 +43,7 @@ class Upload_Video:
             except:
                 print("fuck")
             else:
-                filepath = f'../../build/{game_date}/{player_name}/thumbnail.png'
+                filepath = f'{build_path}/{game_date}/{player_name}/thumbnail.png'
                 select_thumbnail.send_keys(filepath)
                 break
 

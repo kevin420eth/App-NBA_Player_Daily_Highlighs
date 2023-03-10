@@ -2,7 +2,7 @@ import requests, os, time
 from selenium.webdriver.common.by import By
 
 class Ast:
-    def download(self, url, ast_data, player_name, game_date, driver):
+    def download(self, url, ast_data, player_name, game_date, driver, build_path):
         while True:
             driver.get(url)
             time.sleep(3)
@@ -152,7 +152,7 @@ class Ast:
 #------------------------------------------Download the videos--------------------------------
 
         try:
-            os.mkdir(f"../../build/{game_date}/{player_name}")
+            os.mkdir(f"{build_path}/{game_date}/{player_name}")
         except:
             pass
 
@@ -161,10 +161,10 @@ class Ast:
         for _ in all_video_link:
             try:
                 response = requests.get(_)
-                with open(f"../../build/{game_date}/{player_name}/{each_play_time[n]}.mp4","wb") as f:
+                with open(f"{build_path}/{game_date}/{player_name}/{each_play_time[n]}.mp4","wb") as f:
                     f.write(response.content)
             except Exception as e:
-                with open(f"../../build/{game_date}/{player_name}/log.txt","a") as f:
+                with open(f"{build_path}/{game_date}/{player_name}/log.txt","a") as f:
                     f.write(f"{e}\n")
                     f.write(f"{n+1} of {len(all_video_link)} is missing")
             else:          
@@ -176,5 +176,5 @@ class Ast:
         if len(all_video_link) == len(key_word_list):
             pass
         else:
-            with open(f"../../build/{game_date}/videos_missing.txt", "a") as f:
+            with open(f"{build_path}/{game_date}/videos_missing.txt", "a") as f:
                 f.write(f"{player_name} - AST video missing\n")

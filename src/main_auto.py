@@ -20,7 +20,7 @@ chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 driver = webdriver.Chrome(service=s, options=chrome_options)
 
-url = "https://www.nba.com/games?date=2023-3-8"
+url = "https://www.nba.com/games?date=2023-03-08"
 driver.get(url)
 
 driver.maximize_window()
@@ -46,11 +46,26 @@ upload_video = Upload_Video()
 
 today_date = str(datetime.now()).split()[0].replace("-","")
 game_date = url.replace("https://www.nba.com/games?date=","").split("-")
-game_date = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
+game_date_readable = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
+game_date = f"{game_date[1]}{game_date[2]}{game_date[0]}"
 
-os.mkdir(f'./{game_date}')
+print(game_date[0])
+print(game_date[1])
+print(game_date[2])
+print(game_date)
+print(game_date_readable)
 
-with open(f"./{game_date}/completed_player-{today_date}.txt", "a") as f:
+
+basepath = os.path.dirname(__file__)
+assets_path = os.path.abspath(os.path.join(basepath, "..", "assets"))
+build_path = os.path.abspath(os.path.join(basepath, "..", "build"))
+
+try:
+    os.mkdir(f'{build_path}/{game_date}')
+except:
+    pass
+
+with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
     pass
 #---------------------------------------------Scrape Data---------------------------------------------
 
@@ -65,7 +80,7 @@ for _ in gamecard:
     game_page_link = _.find_element(By.TAG_NAME,"a").get_attribute("href")
     match_info = game_page_link.replace("https://www.nba.com/game/","").split("-")
 
-    with open("../assets/information/team_info.json","r") as f:
+    with open(f"{assets_path}/information/team_info.json","r") as f:
         team_dict = json.load(f)
 
     away_team = team_dict[match_info[0].upper()]["Name"]
@@ -154,7 +169,7 @@ while True:
 
             for each_player in highlight_player:
                 try:
-                    with open(f"./{game_date}/completed_player-{today_date}.txt", "r") as f:
+                    with open(f"{build_path}/{game_date}/completed_player.txt", "r") as f:
                         completed_list = f.read()
                 except:
                     completed_list = ""
@@ -163,26 +178,26 @@ while True:
                     pass
                 else:
                     if each_player["fgm_data"] > 0:
-                        fgm.download(each_player["fgm_link"], each_player['player_name'], today_date, driver)
+                        fgm.download(each_player["fgm_link"], each_player['player_name'], game_date, driver, build_path)
                         print("FGM clips are completed!")
 
                     if each_player["ast_data"] > 0:
-                        ast.download(each_player["ast_link"], each_player["ast_data"], each_player['player_name'], today_date, driver)
+                        ast.download(each_player["ast_link"], each_player["ast_data"], each_player['player_name'], game_date, driver, build_path)
                         print("AST clips are completed!")
 
                     if each_player["blk_data"] > 0:
-                        blk_and_stl.download(each_player["blk_link"], each_player['player_name'], today_date, driver)
+                        blk_and_stl.download(each_player["blk_link"], each_player['player_name'], game_date, driver, build_path)
                         print("BLK clips are completed!")
 
-                    yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date}) | NBA Regular Season"
+                    yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date_readable}) | NBA Regular Season"
 
-                    with open(f"C:/Users/Kevin/Desktop/{each_player['player_name']}/log.txt","a",encoding="utf-8") as f:
-                        f.write("The new title for Youtube 👇\n")
+                    with open(f"{build_path}/{game_date}/{each_player['player_name']}/log.txt","a",encoding="utf-8") as f:
+                        f.write("The title for Youtube 👇\n")
                         f.write(f"{yt_title}\n")
                         f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
-                        f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date}\n")
+                        f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date_readable}\n")
                     
-                    hm.highlight_maker(each_player["player_name"], game_date)
+                    hm.highlight_maker(each_player["player_name"], game_date, assets_path, build_path)
 
                     make_thumbnail(
                     each_player["player_name"],
@@ -192,12 +207,15 @@ while True:
                     each_player["ast_data"],
                     _['away_team'],
                     _['home_team'],
-                    game_date
+                    game_date,
+                    game_date_readable,
+                    assets_path,
+                    build_path
                     )
 
-                    upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date)
+                    upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date, assets_path, build_path)
 
-                    with open(f"./{game_date}/completed_player-{today_date}.txt", "a") as f:
+                    with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
                         f.write(f'{each_player["player_name"]}\n')
 
             #Delete the game which is done out of game_info list
