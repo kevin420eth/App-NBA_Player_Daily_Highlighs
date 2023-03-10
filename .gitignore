@@ -1,2 +1,4 @@
 #dependices
 /build
+/video/__pycache__
+/data/__pycache__
