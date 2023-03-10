@@ -1,5 +1,6 @@
 import json, time, os
 from datetime import datetime
+from pytz import timezone
 from data.field_goal_made import Fgm
 from data.block_and_steal import Blk_And_Stl
 from data.assist import Ast
@@ -20,7 +21,9 @@ chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 driver = webdriver.Chrome(service=s, options=chrome_options)
 
-url = "https://www.nba.com/games?date=2023-03-09"
+tz = timezone('EST')
+today_date = str(datetime.now(tz)).split()[0]
+url = f"https://www.nba.com/games?date={today_date}"
 driver.get(url)
 
 driver.maximize_window()
@@ -44,7 +47,6 @@ blk_and_stl = Blk_And_Stl()
 hm = Highlight_Make()
 upload_video = Upload_Video()
 
-today_date = str(datetime.now()).split()[0].replace("-","")
 game_date = url.replace("https://www.nba.com/games?date=","").split("-")
 game_date_readable = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
 game_date = f"{game_date[1]}{game_date[2]}{game_date[0]}"
