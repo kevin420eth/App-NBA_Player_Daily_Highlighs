@@ -1,28 +1,34 @@
-import time
+import json, time, os
 from datetime import datetime
+from pytz import timezone
 from data.field_goal_made import Fgm
 from data.block_and_steal import Blk_And_Stl
 from data.assist import Ast
+from video.highlights_maker import Highlight_Make
+from video.thumbnail_maker import make_thumbnail
+from video.upload_video import Upload_Video
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
+#--------------------------------------Initialize Selenium--------------------------------------
 
-fgm = Fgm()
-ast = Ast()
-blk_and_stl = Blk_And_Stl()
+s = Service("D:/Kevin/Programming/chromedriver.exe")
+chrome_options = Options()
 
+chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
-s=Service("D:/Kevin/Programming/chromedriver.exe")
-driver = webdriver.Chrome(service=s)
-driver.maximize_window()
+driver = webdriver.Chrome(service=s, options=chrome_options)
 
-#-------------------------------------------Start-------------------------------------------
-
-url = input("Please Enter URL:\n")
+tz = timezone('EST')
+today_date = str(datetime.now(tz)).split()[0]
+url = f"https://www.nba.com/games?date={today_date}"
 driver.get(url)
 
-#-------------------------------------------Accept Cookie Privacy----------------------------------
+driver.maximize_window()
+
+#--------------------------------------Set Cookie Policy-----------------------------------------
 
 #Click the cookies accept button when browser first time loads a page on NBA.com
 try:
@@ -33,110 +39,191 @@ else:
     cookie_accept_button.click()
     time.sleep(5)
 
-#-------------------------------------------Set Game Date-------------------------------------------
+#--------------------------------------Initialize-------------------------------------------
 
-game_info = driver.find_elements(By.CLASS_NAME, "GameSummary_sumHeading__OrQPg")[1]
-date = game_info.find_elements(By.CLASS_NAME, "InfoCard_column__et46d")[1].text
+fgm = Fgm()
+ast = Ast()
+blk_and_stl = Blk_And_Stl()
+hm = Highlight_Make()
+upload_video = Upload_Video()
 
-date = str(datetime.strptime(date, "%B %d, %Y")).split(" ")[0].split("-")
-date = f"{date[1]}/{date[2]}/{date[0]}"
+game_date = url.replace("https://www.nba.com/games?date=","").split("-")
+game_date_readable = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
+game_date = f"{game_date[1]}{game_date[2]}{game_date[0]}"
 
-#-------------------------------------------Scrape Data-------------------------------------------
+basepath = os.path.dirname(__file__)
+assets_path = os.path.abspath(os.path.join(basepath, "..", "assets"))
+build_path = os.path.abspath(os.path.join(basepath, "..", "build"))
 
-url = f"{url}/box-score"
-driver.get(url)
+try:
+    os.mkdir(f'{build_path}/{game_date}')
+except:
+    pass
 
-stat_table = driver.find_elements(By.CLASS_NAME,"StatsTableBody_tbody__uvj_P")
-player_stat = {}
+with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
+    pass
+#---------------------------------------------Scrape Data---------------------------------------------
 
-for _ in stat_table:
-    each_row = _.find_elements(By.TAG_NAME,"tr")
-    for _ in each_row:
-        try:
-            palyer_name = _.find_element(By.CLASS_NAME,"GameBoxscoreTablePlayer_gbpNameFull__cf_sn").text.lower()
-            all_data = _.find_elements(By.CLASS_NAME,"GameBoxscoreTable_stat__jWIuU")
-            fgm_data = int(all_data[1].text) #Data of field goal made
-            reb_data = int(all_data[12].text) #Data of rebound
-            ast_data = int(all_data[13].text) #Data of assist
-            blk_data = int(all_data[15].text) #Data of block
-            pts_data = int(all_data[18].text) #Data of Point
+game_info = []
 
-            #Find the link of field goal made video page
-            if fgm_data > 0:
-                fgm_link = all_data[1].find_element(By.TAG_NAME,"a").get_attribute("href")
-            else:
-                fgm_link = ""
+#Find the link of main page for each game from gamecards
+gamecard = driver.find_elements(By.CLASS_NAME,"GameCard_gcMain__q1lUW")
 
-            #Find the link of assist video page
-            if ast_data > 0:
-                ast_link = all_data[13].find_element(By.TAG_NAME,"a").get_attribute("href")
-            else:
-                ast_link = ""
 
-            #Find the link of block video page
-            if blk_data > 0:
-                blk_link = all_data[15].find_element(By.TAG_NAME,"a").get_attribute("href")
-            else:
-                blk_link = ""
-        except:
-            pass
-        else:
-            #Add video page links of each player's field goal made, assist and block to player_stat dictionary
-            player_stat[palyer_name] = {
-                "fgm_link":fgm_link,
-                "ast_link":ast_link,
-                "blk_link":blk_link,
-                "PTS":pts_data,
-                "REB":reb_data,
-                "AST":ast_data
-                }
+#Find link, gameid and match info for each match then add them in to game_info list
+for _ in gamecard:
+    game_page_link = _.find_element(By.TAG_NAME,"a").get_attribute("href")
+    match_info = game_page_link.replace("https://www.nba.com/game/","").split("-")
 
-#-------------------------------------------Video Download-------------------------------------------
+    with open(f"{assets_path}/information/team_info.json","r") as f:
+        team_dict = json.load(f)
+
+    away_team = team_dict[match_info[0].upper()]["Name"]
+    home_team = team_dict[match_info[2].upper()]["Name"]
+    match_teams = f"{match_info[0]}-vs-{match_info[2]}"
+    gameid = match_info[3]
+
+    game_info.append({
+        "away_team":away_team,
+        "home_team":home_team,
+        "match_team":match_teams,
+        "gameid":gameid,
+        "game_page_link":game_page_link
+        })
+
 
 while True:
-    while True:
+    for _ in game_info:
+        highlight_player = []
+        box_page = f'{_["game_page_link"]}/box-score#box-score'
+
         try:
-            #Find the fgm_link, ast_link and blk_link of the target player
-            taget_player = input("Enter player's name\n").lower()
-            target_player_fgm_link = player_stat[taget_player]["fgm_link"]
-            target_player_ast_link = player_stat[taget_player]["ast_link"]
-            target_player_blk_link = player_stat[taget_player]["blk_link"]
-            target_player_ast_data = player_stat[taget_player]["AST"]
-        except KeyError:
-            print("\nWrong Name! Please try again!\n")
-        else:            
+            driver.get(box_page)
+            time.sleep(3)
+            #Check videos are prepared or not by inspecting if FGM link in first tatal row is available or not
+            link_of_total_fgm = driver.find_element(By.CLASS_NAME,"GameBoxscoreTable_statBold__8Jy3I").find_element(By.TAG_NAME,"a").get_attribute("href")
+        except Exception as e:
+            print(f'The videos of {_["match_team"]} are not ready yet!')
+        else:
+            #Collect the two tables(away team and home team) on the page
+            stat_table = driver.find_elements(By.CLASS_NAME,"StatsTableBody_tbody__uvj_P")
+
+            for n in stat_table:
+                each_row = n.find_elements(By.TAG_NAME,"tr")
+                each_row.remove(each_row[-1]) #Remove the total row form tha table
+
+                #Collect each player's stat on the table
+                for m in each_row:
+                    player_name = m.find_element(By.CLASS_NAME,"GameBoxscoreTablePlayer_gbpNameFull__cf_sn").text
+                    player_profile_link = m.find_element(By.CLASS_NAME,"GameBoxscoreTablePlayer_link___fXjS").get_attribute("href")
+                    try:
+                        all_data = m.find_elements(By.CLASS_NAME,"GameBoxscoreTable_stat__jWIuU")
+                        fgm_data = int(all_data[1].text) #Data of field goal made
+                        reb_data = int(all_data[12].text) #Data of rebound
+                        ast_data = int(all_data[13].text) #Data of assist
+                        stl_data = int(all_data[14].text) #Data of steal
+                        blk_data = int(all_data[15].text) #Data of block
+                        pts_data = int(all_data[18].text) #Data of Point
+                    except IndexError:
+                        pass
+                    except Exception as e:
+                        print(e)
+                        
+
+                    #Check if the total of PTS + REB + AST reaches 36 and start downloading process
+                    if pts_data + reb_data + ast_data > 35:
+                        try:
+                            fgm_link = all_data[1].find_element(By.TAG_NAME,"a").get_attribute("href")
+                        except Exception as e:
+                            fgm_link = ""
+
+                        try:
+                            ast_link = all_data[13].find_element(By.TAG_NAME,"a").get_attribute("href")
+                        except Exception as e:
+                            ast_link = ""
+
+                        try:
+                            blk_link = all_data[15].find_element(By.TAG_NAME,"a").get_attribute("href")
+                        except Exception as e:
+                            blk_link = ""
+
+                        highlight_player.append(
+                            {
+                            "player_name":player_name,
+                            "player_profile_link":player_profile_link,
+                            "fgm_data":fgm_data,
+                            "pts_data":pts_data,
+                            "reb_data":reb_data,
+                            "ast_data":ast_data,
+                            "blk_data":blk_data,
+                            "fgm_link":fgm_link,
+                            "ast_link":ast_link,
+                            "blk_link":blk_link
+                            }
+                        )
+
+            for each_player in highlight_player:
+                try:
+                    with open(f"{build_path}/{game_date}/completed_player.txt", "r") as f:
+                        completed_list = f.read()
+                except:
+                    completed_list = ""
+
+                if each_player["player_name"] in completed_list:
+                    pass
+                else:
+                    start_time = time.time()
+                    if each_player["fgm_data"] > 0:
+                        fgm.download(each_player["fgm_link"], each_player['player_name'], game_date, driver, build_path)
+                        print("FGM clips are completed!")
+
+                    if each_player["ast_data"] > 0:
+                        ast.download(each_player["ast_link"], each_player["ast_data"], each_player['player_name'], game_date, driver, build_path)
+                        print("AST clips are completed!")
+
+                    if each_player["blk_data"] > 0:
+                        blk_and_stl.download(each_player["blk_link"], each_player['player_name'], game_date, driver, build_path)
+                        print("BLK clips are completed!")
+                    
+                    hm.highlight_maker(each_player["player_name"], game_date, assets_path, build_path)
+
+                    make_thumbnail(
+                    each_player["player_name"],
+                    each_player["player_profile_link"],
+                    each_player["pts_data"],
+                    each_player["reb_data"],
+                    each_player["ast_data"],
+                    _['away_team'],
+                    _['home_team'],
+                    game_date,
+                    game_date_readable,
+                    assets_path,
+                    build_path
+                    )
+
+                    yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date_readable}) | NBA Regular Season"
+
+                    upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date, assets_path, build_path)
+
+                    end_time = time.time()
+
+                    with open(f"{build_path}/{game_date}/{each_player['player_name']}/log.txt","a",encoding="utf-8") as f:
+                        f.write("The title for Youtube 👇\n")
+                        f.write(f"{yt_title}\n")
+                        f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
+                        f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date_readable}\n")
+                        f.write(f"This video cost {int(start_time-end_time)} seconds to complete\n")
+
+                    with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
+                        f.write(f'{each_player["player_name"]}\n')
+
+            #Delete the game which is done out of game_info list
+            game_info.remove(_)
             break
+
+        time.sleep(15)
+            
     
-    #If player's field goal made is not 0 then start downloading all videos on the page
-    if target_player_fgm_link != "" :
-        fgm.download(target_player_fgm_link,taget_player, driver)
-        print("FGM clips are completed!")
-
-    #If player's assist is not 0 then start downloading all videos on the page
-    if target_player_ast_link != "" :
-        ast.download(target_player_ast_link, target_player_ast_data, taget_player, driver)
-        print("AST clips are completed!")
-
-    #If player's block is not 0 then start downloading all videos on the page
-    if target_player_blk_link != "" :
-        blk_and_stl.download(target_player_blk_link,taget_player, driver)
-        print("BLK clips are completed!")
-
-    #Generate a title for the video on Youtube
-    yt_title = fgm.generate_title(date)
-    with open(f"C:/Users/Kevin/Desktop/{fgm.player_name}/log.txt","a",encoding="utf-8") as f:
-        f.write("The new title for Youtube 👇\n")
-        f.write(f"{yt_title}\n")
-        f.write(f"\n{player_stat[taget_player]['PTS']}\n{player_stat[taget_player]['REB']}\n{player_stat[taget_player]['AST']}\n\n")
-        f.write(f"{fgm.away_team} @ {fgm.home_team}\n{date}\n")
-    
-    #Back to the box page
-    print("\nTask is completed!\n")
-    driver.get(url)
-
-    #Ask user to continue or not
-    exit_or_not = input("Would you like to continue (Y/N)? ").lower()
-
-    if exit_or_not == "n":
-        print("\nGoodbye!\n")
+    if len(game_info) == 0:
+        print("All tasks are done")
         break
