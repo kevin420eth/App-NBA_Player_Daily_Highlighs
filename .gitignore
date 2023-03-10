@@ -1,7 +1,6 @@
 #dependices
 /build
-src/video/__pycache__
-src/data/__pycache__
+__pycache__/
 
 #file
 /src/test.py
