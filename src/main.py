@@ -56,6 +56,11 @@ assets_path = os.path.abspath(os.path.join(basepath, "..", "assets"))
 build_path = os.path.abspath(os.path.join(basepath, "..", "build"))
 
 try:
+    os.mkdir(f'{build_path}')
+except:
+    pass
+
+try:
     os.mkdir(f'{build_path}/{game_date}')
 except:
     pass
