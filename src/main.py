@@ -28,7 +28,7 @@ driver.get(url)
 
 driver.maximize_window()
 
-#--------------------------------------Set Cookie Policy-----------------------------------------
+#--------------------------------------Accept Cookie Policy-----------------------------------------
 
 #Click the cookies accept button when browser first time loads a page on NBA.com
 try:
