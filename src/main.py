@@ -212,7 +212,7 @@ while True:
                         f.write(f"{yt_title}\n")
                         f.write(f'\n{each_player["pts_data"]}\n{each_player["reb_data"]}\n{each_player["ast_data"]}\n\n')
                         f.write(f"{_['away_team']} @ {_['home_team']}\n{game_date_readable}\n")
-                        f.write(f"This video cost {int(start_time-end_time)} seconds to complete\n")
+                        f.write(f"This video cost {int(end_time-start_time)} seconds to complete\n")
 
                     with open(f"{build_path}/{game_date}/completed_player.txt", "a") as f:
                         f.write(f'{each_player["player_name"]}\n')
