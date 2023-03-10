@@ -2,3 +2,6 @@
 /build
 /video/__pycache__
 /data/__pycache__
+
+#file
+/src/test.py
