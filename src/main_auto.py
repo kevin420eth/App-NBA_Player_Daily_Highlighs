@@ -20,7 +20,7 @@ chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 driver = webdriver.Chrome(service=s, options=chrome_options)
 
-url = "https://www.nba.com/games?date=2023-03-08"
+url = "https://www.nba.com/games?date=2023-03-09"
 driver.get(url)
 
 driver.maximize_window()
@@ -48,13 +48,6 @@ today_date = str(datetime.now()).split()[0].replace("-","")
 game_date = url.replace("https://www.nba.com/games?date=","").split("-")
 game_date_readable = f"{game_date[1]}/{game_date[2]}/{game_date[0]}"
 game_date = f"{game_date[1]}{game_date[2]}{game_date[0]}"
-
-print(game_date[0])
-print(game_date[1])
-print(game_date[2])
-print(game_date)
-print(game_date_readable)
-
 
 basepath = os.path.dirname(__file__)
 assets_path = os.path.abspath(os.path.join(basepath, "..", "assets"))
