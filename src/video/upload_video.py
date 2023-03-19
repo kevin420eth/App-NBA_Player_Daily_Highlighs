@@ -67,4 +67,5 @@ class Upload_Video:
                 time.sleep(5)
             else:
                 driver.switch_to.window(driver.window_handles[0])
+                print('Video uploaded.')
                 break
