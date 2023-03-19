@@ -41,7 +41,7 @@ class Upload_Video:
             try:
                 select_thumbnail = driver.find_element(By.XPATH,"//input[@type='file']")
             except:
-                print("fuck")
+                print("Something went wrong when uploading thumbnail...")
             else:
                 filepath = f'{build_path}/{game_date}/{player_name}/thumbnail.png'
                 select_thumbnail.send_keys(filepath)
