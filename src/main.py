@@ -24,8 +24,9 @@ driver = webdriver.Chrome(service=s, options=chrome_options)
 tz = timezone('EST')
 today_date = str(datetime.now(tz)).split()[0]
 url = f"https://www.nba.com/games?date={today_date}"
-driver.get(url)
 
+driver.switch_to.window(driver.window_handles[0])
+driver.get(url)
 driver.maximize_window()
 
 #--------------------------------------Accept Cookie Policy-----------------------------------------
