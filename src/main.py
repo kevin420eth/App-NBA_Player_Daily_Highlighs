@@ -208,7 +208,7 @@ while True:
 
                     yt_title = f"[NBA] {each_player['player_name']} Highlights | {_['away_team']} @ {_['home_team']} ({game_date_readable}) | NBA Regular Season"
 
-                    upload_video.upload_video(driver,each_player["player_name"], yt_title, game_date, assets_path, build_path)
+                    upload_video.upload_video(driver, each_player["player_name"], yt_title, game_date, build_path)
 
                     end_time = time.time()
 
