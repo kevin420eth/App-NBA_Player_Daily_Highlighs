@@ -1,16 +1,32 @@
-import json, time, os
+import json, time, os, subprocess
 from datetime import datetime
 from pytz import timezone
+
 from data.field_goal_made import Fgm
 from data.block_and_steal import Blk_And_Stl
 from data.assist import Ast
+
 from video.highlights_maker import Highlight_Make
 from video.thumbnail_maker import make_thumbnail
 from video.upload_video import Upload_Video
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
+#--------------------------------------Initialize Browser--------------------------------------
+
+chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+remote_debugging_port = 9222
+
+# Build the command to launch Chrome in debug mode
+cmd_open_browser = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile"'
+cmd_open_new_tab = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile" --new-tab "https://www.google.com/"'
+
+# Launch Chrome in debug mode
+subprocess.Popen(cmd_open_browser)
+subprocess.Popen(cmd_open_new_tab)
 
 #--------------------------------------Initialize Selenium--------------------------------------
 
