@@ -22,6 +22,7 @@ remote_debugging_port = 9222
 
 # Build the command to launch Chrome in debug mode
 cmd_open_browser = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile"'
+time.sleep(1)
 cmd_open_new_tab = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile" --new-tab "https://www.google.com/"'
 
 # Launch Chrome in debug mode
