@@ -1,7 +1,7 @@
 #dependices
 /build
 __pycache__/
-/bug
+# /bug
 
 #file
 /src/test.py
