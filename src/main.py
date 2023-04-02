@@ -18,26 +18,31 @@ from selenium.webdriver.chrome.options import Options
 if __name__ == "__main__":
 #--------------------------------------Initialize Browser--------------------------------------
 
-    chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
-    remote_debugging_port = 9222
+    # chrome_path = '/usr/bin/google-chrome'
+    # remote_debugging_port = 9222
 
-    # Build the command to launch Chrome in debug mode
-    cmd_open_browser = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile"'
-    time.sleep(10)
-    cmd_open_new_tab = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile" --new-tab "https://www.google.com/"'
+    # # Build the command to launch Chrome in debug mode
+    # cmd_open_browser = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile"'
+    # time.sleep(10)
+    # cmd_open_new_tab = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile" --new-tab "https://www.google.com/"'
 
-    # Launch Chrome in debug mode
-    subprocess.Popen(cmd_open_browser)
-    subprocess.Popen(cmd_open_new_tab)
+    # # Launch Chrome in debug mode
+    # subprocess.Popen(cmd_open_browser)
+    # subprocess.Popen(cmd_open_new_tab)
 
     #--------------------------------------Initialize Selenium--------------------------------------
 
-    s = Service("D:/Kevin/Programming/chromedriver.exe")
+    s = Service("/home/kevmars/Desktop/App-NBA_Player_Daily_Highlighs/chromedriver")
     chrome_options = Options()
 
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
     driver = webdriver.Chrome(service=s, options=chrome_options)
+
+
+    # chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument('--remote-debugging-port=9222')
+    # driver = webdriver.Chrome(options=chrome_options)
 
     tz = timezone('EST')
     today_date = str(datetime.now(tz)).split()[0]

@@ -13,7 +13,7 @@ ast = Ast()
 blk_and_stl = Blk_And_Stl()
 
 
-s=Service("D:/Kevin/Programming/chromedriver.exe")
+s=Service("/home/kevmars/Desktop/App-NBA_Player_Daily_Highlighs/chromedriver")
 driver = webdriver.Chrome(service=s)
 driver.maximize_window()
 
