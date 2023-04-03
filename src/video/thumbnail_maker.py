@@ -9,10 +9,14 @@ def make_thumbnail(player_name, player_profile_link, pts_data, reb_data, ast_dat
     while True:
         try:
             response = requests.get(player_profile_link).content
+
             soup = BeautifulSoup(response,"lxml")
+
             player_pfp_link = soup.find("img", class_ = "PlayerSummary_playerImage__sysif")["src"]
-        except:
+
+        except Exception as e:
             time.sleep(5)
+            print(e)
         else:
             break
     
