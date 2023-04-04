@@ -7,14 +7,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 
-
 fgm = Fgm()
 ast = Ast()
 blk_and_stl = Blk_And_Stl()
 
-
-s=Service("/home/kevmars/Desktop/App-NBA_Player_Daily_Highlighs/chromedriver")
-driver = webdriver.Chrome(service=s)
+chrome_options = webdriver.ChromeOptions()
+driver = webdriver.Chrome(options=chrome_options)
 driver.maximize_window()
 
 #-------------------------------------------Start-------------------------------------------
