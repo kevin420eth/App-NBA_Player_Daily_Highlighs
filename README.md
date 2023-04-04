@@ -1,4 +1,4 @@
-![Banner](https://i.imgur.com/LVkQJyO.png)
+![Banner](https://i.imgur.com/AyIpCyV.png)
 
 # NBA players daily highlights
 
