@@ -3,7 +3,6 @@
 
 This application allows you to download NBA players' highlights and upload to your Youtube channel everyday automatically.
 
-
 ## Installation
 
 Install the required packages below
