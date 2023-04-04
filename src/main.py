@@ -1,4 +1,4 @@
-import json, time, os, subprocess
+import json, time, os, subprocess, config
 from datetime import datetime
 from pytz import timezone
 
@@ -16,33 +16,20 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 if __name__ == "__main__":
-#--------------------------------------Initialize Browser--------------------------------------
+    #--------------------------------------Initialize Chrome Browser--------------------------------------
 
-    # chrome_path = '/usr/bin/google-chrome'
-    # remote_debugging_port = 9222
-
-    # # Build the command to launch Chrome in debug mode
-    # cmd_open_browser = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile"'
-    # time.sleep(10)
-    # cmd_open_new_tab = f'{chrome_path} --remote-debugging-port={remote_debugging_port} --user-data-dir="c:/selenum/automationprofile" --new-tab "https://www.google.com/"'
-
-    # # Launch Chrome in debug mode
-    # subprocess.Popen(cmd_open_browser)
-    # subprocess.Popen(cmd_open_new_tab)
+    chrome_path = config.chrome_browser_path
+    user_profile_path = config.user_profile_path
+    
+    # Launch Chrome in debug mode
+    subprocess.Popen([chrome_path, '--remote-debugging-port=9222', f'--user-data-dir={user_profile_path}'])
 
     #--------------------------------------Initialize Selenium--------------------------------------
 
-    s = Service("/home/kevmars/Desktop/App-NBA_Player_Daily_Highlighs/chromedriver")
-    chrome_options = Options()
-
+    chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
-
-    driver = webdriver.Chrome(service=s, options=chrome_options)
-
-
-    # chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument('--remote-debugging-port=9222')
-    # driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.execute_script('window.open("https:youtube.com", "_blank");')
 
     tz = timezone('EST')
     today_date = str(datetime.now(tz)).split()[0]
@@ -160,7 +147,8 @@ if __name__ == "__main__":
                             
 
                         #Check if the total of PTS + REB + AST reaches 36 and start downloading process
-                        if pts_data + reb_data + ast_data > 35:
+                        check_data = config.algorithm(fgm_data, reb_data, ast_data, stl_data, blk_data, pts_data)
+                        if check_data:
                             try:
                                 fgm_link = all_data[1].find_element(By.TAG_NAME,"a").get_attribute("href")
                             except Exception as e:
