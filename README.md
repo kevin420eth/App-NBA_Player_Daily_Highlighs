@@ -5,7 +5,7 @@ This application allows you to download NBA players' highlights and upload to yo
 
 ## Installation
 
-Install the required packages below with pip before you start
+Use the package manager pip to install the required packages below
 
 * [ChromeDriver](https://chromedriver.chromium.org/downloads)
 * [selenium](https://pypi.org/project/selenium/)
