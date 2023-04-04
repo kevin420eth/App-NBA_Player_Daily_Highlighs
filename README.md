@@ -1,6 +1,6 @@
 ![Banner](https://i.imgur.com/AyIpCyV.png)
 
-# NBA players daily highlights
+# NBA players daily highlights downloader
 
 This application allows you to download NBA players' highlights and upload to your Youtube channel everyday automatically.
 
