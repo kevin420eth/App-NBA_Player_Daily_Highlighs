@@ -189,6 +189,9 @@ if __name__ == "__main__":
                     if each_player["player_name"] in completed_list:
                         pass
                     else:
+                        os.mkdir(f"{build_path}/{game_date}/{each_player['player_name']}")
+                        os.mkdir(f"{build_path}/{game_date}/{each_player['player_name']}/clips")
+
                         start_time = time.time()
                         if each_player["fgm_data"] > 0:
                             fgm.download(each_player["fgm_link"], each_player['player_name'], game_date, driver, build_path)

@@ -133,17 +133,12 @@ class Blk_And_Stl:
                 pass
 #------------------------------------------Download the videos--------------------------------
 
-        try:
-            os.mkdir(f"{build_path}/{game_date}/{player_name}")
-        except:
-            pass
-
         #Download each play of the player 
         n=0
         for _ in all_video_link:
             try:
                 response = requests.get(_)
-                with open(f"{build_path}/{game_date}/{player_name}/{each_play_time[n]}.mp4","wb") as f:
+                with open(f"{build_path}/{game_date}/{player_name}/clips/{each_play_time[n]}.mp4","wb") as f:
                     f.write(response.content)
             except Exception as e:
                 with open(f"{build_path}/{game_date}/{player_name}/log.txt","a") as f:
