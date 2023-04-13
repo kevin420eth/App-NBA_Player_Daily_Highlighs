@@ -11,4 +11,3 @@ def algorithm(fgm, reb, ast ,stl, blk, pts):
         return True
     else:
         return False
-    

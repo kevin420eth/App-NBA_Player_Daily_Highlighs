@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 class Upload_Video:
-    def upload_video(self, driver, player_name, title, game_date, build_path):
+    def upload_video(self, driver, player_name, away_team, home_team, title, game_date, build_path):
 
         driver.switch_to.window(driver.window_handles[1])
         url = "https://studio.youtube.com/channel/UCr7j8DG6ZWNJf5R8LRweYBw/videos/upload?d=ud&filter=%5B%5D&sort=%7B%22columnType%22%3A%22date%22%2C%22sortOrder%22%3A%22DESCENDING%22%7D"
@@ -35,6 +35,17 @@ class Upload_Video:
                 video_title_field.send_keys(Keys.CONTROL,"a")
                 video_title_field.send_keys(Keys.DELETE)
                 video_title_field.send_keys(title)
+                break
+
+        #Paste the description into the field
+        while True:
+            try:
+                video_description_field = driver.find_elements(By.CSS_SELECTOR,"#textbox")[1]
+            except:
+                time.sleep(5)
+            else:
+                video_description_field.send_keys(Keys.END)
+                video_description_field.send_keys(f' #{away_team} #{home_team} ')
                 break
 
         #Upload the thumbnail
