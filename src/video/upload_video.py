@@ -45,7 +45,7 @@ class Upload_Video:
                 time.sleep(5)
             else:
                 video_description_field.send_keys(Keys.END)
-                video_description_field.send_keys(f' #{away_team} #{home_team} ')
+                video_description_field.send_keys(f' #{player_name} #{away_team} #{home_team} ')
                 break
 
         #Upload the thumbnail
