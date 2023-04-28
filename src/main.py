@@ -29,7 +29,7 @@ if __name__ == "__main__":
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     driver = webdriver.Chrome(options=chrome_options)
-    driver.execute_script('window.open("https:youtube.com", "_blank");')
+    driver.execute_script('window.open("https://youtube.com", "_blank");')
 
     tz = timezone('EST')
     today_date = str(datetime.now(tz)).split()[0]
