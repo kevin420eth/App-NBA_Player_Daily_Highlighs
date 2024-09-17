@@ -1,14 +1,15 @@
-import json, time, os, subprocess, config
+import json, time, os, subprocess
 from datetime import datetime
 from pytz import timezone
+from dotenv import load_dotenv
 
-from data.field_goal_made import Fgm
-from data.block_and_steal import Blk_And_Stl
-from data.assist import Ast
+from src.data.field_goal_made import Fgm
+from src.data.block_and_steal import Blk_And_Stl
+from src.data.assist import Ast
 
-from video.highlights_maker import Highlight_Make
-from video.thumbnail_maker import make_thumbnail
-from video.upload_video import Upload_Video
+from src.video.highlights_maker import Highlight_Make
+from src.video.thumbnail_maker import make_thumbnail
+from src.video.upload_video import Upload_Video
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,19 +17,21 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 if __name__ == "__main__":
-    #--------------------------------------Initialize Chrome Browser--------------------------------------
+    #--------------------------------------Initialize Web Driver--------------------------------------
+    load_dotenv()
+    CHROME_PATH = os.getenv("CHROME_PATH")
+    USER_PROFILE_PATH = os.getenv("USER_PROFILE_PATH")
+    PORT = os.getenv("PORT")
 
-    chrome_path = config.chrome_browser_path
-    user_profile_path = config.user_profile_path
-    
     # Launch Chrome in debug mode
-    subprocess.Popen([chrome_path, '--remote-debugging-port=9222', f'--user-data-dir={user_profile_path}'])
-
-    #--------------------------------------Initialize Selenium--------------------------------------
-
+    subprocess.Popen([CHROME_PATH, f'--remote-debugging-port={PORT}', f'--user-data-dir={USER_PROFILE_PATH}'])
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    chrome_options.add_experimental_option("debuggerAddress", f"127.0.0.1:{PORT}")
     driver = webdriver.Chrome(options=chrome_options)
+    
+    #--------------------------------------Initialize Browser--------------------------------------
+
+
     driver.execute_script('window.open("https://youtube.com", "_blank");')
 
     tz = timezone('EST')
@@ -50,6 +53,8 @@ if __name__ == "__main__":
         cookie_accept_button.click()
         time.sleep(5)
 
+
+    time.sleep(5000)
     #--------------------------------------Initialize-------------------------------------------
 
     fgm = Fgm()
